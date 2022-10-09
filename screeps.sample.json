@@ -24,8 +24,7 @@
     "branch": "main"
   },
   "pserver": {
-    "email": "username",
-    "password": "Password",
+    "token": "f9de7d16-5c83-42c4-bcd3-399d1b02c0d8",
     "protocol": "http",
     "hostname": "1.2.3.4",
     "port": 21025,
