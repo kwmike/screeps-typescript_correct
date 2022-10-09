@@ -28,10 +28,10 @@ const sourceProto = () => {
     enumerable: false,
     configurable: true,
     get: function() {
-      if (this.memory.currentWorkers === undefined || this._currentWorkers === undefined) {
-        this._currentWorkers = this.memory.currentWorkers = [];
+      if (this.memory.currentWorkers === undefined) {
+        this.memory.currentWorkers = [];
       }
-      return this._currentWorkers;
+      return this.memory.currentWorkers;
     }
   });
 
@@ -39,23 +39,12 @@ const sourceProto = () => {
     enumerable: true,
     configurable: true,
     value: function(creep:Creep) {
-      let currentWorkers:Array<{ id:string, name:string }> = [];
-      let retval:{id:string, name:string} = {id:'',name:''}
-      console.log("This.memory: ", JSON.stringify(this.memory));
-      console.log("This._currentWorkers: ", JSON.stringify(this._currentWorkers));
-      console.log("MEMORY: ", JSON.stringify(Memory.source[this.id]))
-      currentWorkers = this.memory.currentWorkers;
-      console.log("Current source workers: ", JSON.stringify(currentWorkers));
-      if (!currentWorkers.find(worker => worker.id === creep.id)) {
-        retval = {
+      if (!this.memory.currentWorkers.find((worker: { id: Id<Creep>; }) => worker.id === creep.id)) {
+        this.memory.currentWorkers.push({
           id: creep.id,
           name: creep.name
-        }
+        });
       }
-      console.log("retval: ", JSON.stringify(retval));
-      currentWorkers.push(retval);
-      this.memory.currentWorkers = this._currentWorkers = currentWorkers;
-      console.log("AFTER MEMORY: ", JSON.stringify(Memory.source[this.id]))
     }
   });
 
@@ -63,16 +52,16 @@ const sourceProto = () => {
     enumerable: true,
     configurable: true,
     value: function(name:string) {
-      let currentWorkers:Array<{id:string, name:string}> = [];
-      if (!this.memory.currentWorkers === undefined || this._currentWorkers === undefined) {
-        currentWorkers = this._currentWorkers;
-      }
-      let index = currentWorkers.findIndex((e) => e.name === name);
-      if (index != -1) {
-        this.memory.currentWorkers = this._currentWorkers = currentWorkers.splice(index,1);
+      console.log(`Removing worker: ${name}`);
+      let index = this.memory.currentWorkers.findIndex((e: { name: string; }) => e.name === name);
+      console.log("index: ", index);
+      if (index !== -1) {
+        console.log("Before removal: ", JSON.stringify(this.memory.currentWorkers));
+        this.memory.currentWorkers.splice(index,1);
+        console.log("After removal: ", JSON.stringify(this.memory.currentWorkers));
       }
     }
-  })
+  });
 }
 
 export default sourceProto;

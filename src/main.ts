@@ -51,6 +51,7 @@ declare global {
   }
 
   interface Source {
+    currentWorkers: Array<{id:string, name:string}>
     totalSpace: number;
     workers: Array<SourceWorker>;
     addWorkers: Function;
@@ -69,7 +70,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
   //console.log(`Current game tick is ${Game.time}`);
 
   Game.creepCount = {
-    harvest: 4,
+    harvest: 8,
     build: 0
   }
 
@@ -83,17 +84,16 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
   // Automatically delete memory of missing creeps
   for (const name in Memory.creeps) {
-    let creep = Game.creeps[name];
     if (!(name in Game.creeps)) {
-      delete Memory.creeps[name];
       _.forEach(Game.spawns, spawner => {
         let sources = spawner.room.find(FIND_SOURCES);
         _.forEach(sources, source => {
           if (source.workers.find(worker => worker.name === name)) {
             source.removeWorkers(name);
           }
-        })
-      })
+        });
+      });
+      delete Memory.creeps[name];
     }
   }
 });

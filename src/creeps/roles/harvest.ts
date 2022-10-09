@@ -16,6 +16,7 @@ const handleHarvest = (creep:Creep) => {
       if (availSources.length > 0) {
         closestAvailSource = creep.pos.findClosestByPath(availSources);
         if (closestAvailSource != null) {
+          // console.log("current workers: ", JSON.stringify(closestAvailSource.workers));
           closestAvailSource.addWorkers(creep);
           creep.setWorkLocation(closestAvailSource.id);
           creep.setWorkStatus(true);
